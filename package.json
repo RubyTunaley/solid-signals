@@ -1,6 +1,6 @@
 {
-  "name": "solid-js",
-  "description": "A declarative JavaScript library for building user interfaces.",
+  "name": "solid-signals",
+  "description": "Just the reactivity from solid-js, no UI framework.",
   "version": "1.8.17",
   "author": "Ryan Carniato",
   "license": "MIT",
