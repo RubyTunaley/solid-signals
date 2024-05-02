@@ -5,10 +5,7 @@
     "target": "esnext",
     "newLine": "LF",
     "moduleResolution": "node",
-    "strict": true,
-    "jsx": "preserve",
-    // Allows TS to see the Vitest globals
-    "types": ["vitest/globals"]
+    "strict": true
   },
   "include": ["./src", "./test"],
   "exclude": ["node_modules"]
