@@ -11,7 +11,12 @@
     // https://github.com/alexeyraspopov/picocolors/issues/50
     "allowSyntheticDefaultImports": true,
     // Allows TS to see the Vitest globals
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "baseUrl": "",
+    "paths": {
+      "solid-js": ["./src"],
+    }
   },
+  "include": ["./test"],
   "exclude": ["node_modules"]
 }

@@ -1,72 +1,247 @@
 {
   "name": "solid-js",
   "description": "A declarative JavaScript library for building user interfaces.",
-  "version": "1.0.0",
+  "version": "1.8.17",
   "author": "Ryan Carniato",
   "license": "MIT",
+  "homepage": "https://solidjs.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/solidjs/solid"
   },
-  "private": true,
+  "main": "./dist/server.cjs",
+  "module": "./dist/server.js",
+  "browser": {
+    "./dist/server.cjs": "./dist/solid.cjs",
+    "./dist/server.js": "./dist/solid.js"
+  },
+  "unpkg": "./dist/solid.cjs",
+  "types": "types/index.d.ts",
+  "sideEffects": false,
+  "type": "module",
+  "files": [
+    "dist",
+    "store/dist",
+    "store/types",
+    "store/package.json",
+    "web/dist",
+    "web/types",
+    "web/package.json",
+    "web/storage/dist",
+    "web/storage/types",
+    "web/storage/package.json",
+    "h/dist",
+    "h/types",
+    "h/package.json",
+    "h/jsx-runtime/dist",
+    "h/jsx-runtime/types",
+    "h/jsx-runtime/package.json",
+    "h/jsx-dev-runtime/package.json",
+    "html/dist",
+    "html/types",
+    "html/package.json",
+    "universal/dist",
+    "universal/types",
+    "universal/package.json",
+    "types",
+    "jsx-runtime.d.ts"
+  ],
+  "exports": {
+    ".": {
+      "worker": {
+        "types": "./types/index.d.ts",
+        "import": "./dist/server.js",
+        "require": "./dist/server.cjs"
+      },
+      "browser": {
+        "development": {
+          "types": "./types/index.d.ts",
+          "import": "./dist/dev.js",
+          "require": "./dist/dev.cjs"
+        },
+        "types": "./types/index.d.ts",
+        "import": "./dist/solid.js",
+        "require": "./dist/solid.cjs"
+      },
+      "deno": {
+        "types": "./types/index.d.ts",
+        "import": "./dist/server.js",
+        "require": "./dist/server.cjs"
+      },
+      "node": {
+        "types": "./types/index.d.ts",
+        "import": "./dist/server.js",
+        "require": "./dist/server.cjs"
+      },
+      "development": {
+        "types": "./types/index.d.ts",
+        "import": "./dist/dev.js",
+        "require": "./dist/dev.cjs"
+      },
+      "types": "./types/index.d.ts",
+      "import": "./dist/solid.js",
+      "require": "./dist/solid.cjs"
+    },
+    "./dist/*": "./dist/*",
+    "./types/*": "./types/*",
+    "./jsx-runtime": {
+      "types": "./types/jsx.d.ts",
+      "default": "./dist/solid.js"
+    },
+    "./jsx-dev-runtime": {
+      "types": "./types/jsx.d.ts",
+      "default": "./dist/solid.js"
+    },
+    "./store": {
+      "worker": {
+        "types": "./store/types/index.d.ts",
+        "import": "./store/dist/server.js",
+        "require": "./store/dist/server.cjs"
+      },
+      "browser": {
+        "development": {
+          "types": "./store/types/index.d.ts",
+          "import": "./store/dist/dev.js",
+          "require": "./store/dist/dev.cjs"
+        },
+        "types": "./store/types/index.d.ts",
+        "import": "./store/dist/store.js",
+        "require": "./store/dist/store.cjs"
+      },
+      "deno": {
+        "types": "./store/types/index.d.ts",
+        "import": "./store/dist/server.js",
+        "require": "./store/dist/server.cjs"
+      },
+      "node": {
+        "types": "./store/types/index.d.ts",
+        "import": "./store/dist/server.js",
+        "require": "./store/dist/server.cjs"
+      },
+      "development": {
+        "types": "./store/types/index.d.ts",
+        "import": "./store/dist/dev.js",
+        "require": "./store/dist/dev.cjs"
+      },
+      "types": "./store/types/index.d.ts",
+      "import": "./store/dist/store.js",
+      "require": "./store/dist/store.cjs"
+    },
+    "./store/dist/*": "./store/dist/*",
+    "./store/types/*": "./store/types/*",
+    "./web": {
+      "worker": {
+        "types": "./web/types/index.d.ts",
+        "import": "./web/dist/server.js",
+        "require": "./web/dist/server.cjs"
+      },
+      "browser": {
+        "development": {
+          "types": "./web/types/index.d.ts",
+          "import": "./web/dist/dev.js",
+          "require": "./web/dist/dev.cjs"
+        },
+        "types": "./web/types/index.d.ts",
+        "import": "./web/dist/web.js",
+        "require": "./web/dist/web.cjs"
+      },
+      "deno": {
+        "types": "./web/types/index.d.ts",
+        "import": "./web/dist/server.js",
+        "require": "./web/dist/server.cjs"
+      },
+      "node": {
+        "types": "./web/types/index.d.ts",
+        "import": "./web/dist/server.js",
+        "require": "./web/dist/server.cjs"
+      },
+      "development": {
+        "types": "./web/types/index.d.ts",
+        "import": "./web/dist/dev.js",
+        "require": "./web/dist/dev.cjs"
+      },
+      "types": "./web/types/index.d.ts",
+      "import": "./web/dist/web.js",
+      "require": "./web/dist/web.cjs"
+    },
+    "./web/storage": {
+      "types": "./web/storage/types/index.d.ts",
+      "import": "./web/storage/dist/storage.js",
+      "require": "./web/storage/dist/storage.cjs"
+    },
+    "./web/dist/*": "./web/dist/*",
+    "./web/types/*": "./web/types/*",
+    "./universal": {
+      "development": {
+        "types": "./universal/types/index.d.ts",
+        "import": "./universal/dist/dev.js",
+        "require": "./universal/dist/dev.cjs"
+      },
+      "types": "./universal/types/index.d.ts",
+      "import": "./universal/dist/universal.js",
+      "require": "./universal/dist/universal.cjs"
+    },
+    "./universal/dist/*": "./universal/dist/*",
+    "./universal/types/*": "./universal/types/*",
+    "./h": {
+      "types": "./h/types/index.d.ts",
+      "import": "./h/dist/h.js",
+      "require": "./h/dist/h.cjs"
+    },
+    "./h/jsx-runtime": {
+      "types": "./h/jsx-runtime/types/index.d.ts",
+      "import": "./h/jsx-runtime/dist/jsx.js",
+      "require": "./h/jsx-runtime/dist/jsx.cjs"
+    },
+    "./h/jsx-dev-runtime": {
+      "types": "./h/jsx-runtime/types/index.d.ts",
+      "import": "./h/jsx-runtime/dist/jsx.js",
+      "require": "./h/jsx-runtime/dist/jsx.cjs"
+    },
+    "./h/dist/*": "./h/dist/*",
+    "./h/types/*": "./h/types/*",
+    "./html": {
+      "types": "./html/types/index.d.ts",
+      "import": "./html/dist/html.js",
+      "require": "./html/dist/html.cjs"
+    },
+    "./html/dist/*": "./html/dist/*",
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "postinstall": "simple-git-hooks",
-    "test": "turbo run test test-types",
-    "coverage": "turbo run coverage",
-    "build": "turbo run build",
-    "types": "turbo run types",
-    "publish": "pnpm run build && pnpm run types && pnpm run release:only",
-    "bump": "changeset add",
-    "release:only": "changeset publish",
-    "format": "prettier --write --cache \"**/*.[tj]s?(x)\""
+    "build": "npm-run-all -nl build:*",
+    "build:clean": "rimraf dist/ coverage/ store/dist/ web/dist/ h/dist/ h/jsx-runtime/dist html/dist/",
+    "build:js": "rollup -c",
+    "types": "npm-run-all -nl types:*",
+    "types:clean": "rimraf types/ store/types/ web/types/ h/types/ h/jsx-runtime/types html/types/",
+    "types:copy": "ncp ../../node_modules/dom-expressions/src/jsx.d.ts ./src/jsx.d.ts && ncp ../../node_modules/dom-expressions/src/jsx-h.d.ts ./h/jsx-runtime/src/jsx.d.ts",
+    "types:src": "tsc --project ./tsconfig.build.json && ncp ../../node_modules/dom-expressions/src/jsx.d.ts ./types/jsx.d.ts",
+    "types:web": "tsc --project ./web/tsconfig.build.json",
+    "types:web-storage": "tsc --project ./web/storage/tsconfig.build.json",
+    "types:copy-web": "ncp ../../node_modules/dom-expressions/src/client.d.ts ./web/types/client.d.ts && ncp ../../node_modules/dom-expressions/src/server.d.ts ./web/types/server.d.ts",
+    "types:store": "tsc --project ./store/tsconfig.build.json",
+    "types:html": "tsc --project ./html/tsconfig.json && ncp ../../node_modules/lit-dom-expressions/types/index.d.ts ./html/types/lit.d.ts",
+    "types:h": "tsc --project ./h/tsconfig.json && ncp ../../node_modules/hyper-dom-expressions/types/index.d.ts ./h/types/hyperscript.d.ts",
+    "types:jsx": "rimraf ./h/jsx-runtime/types && tsc --project ./h/jsx-runtime/tsconfig.json && ncp ../../node_modules/dom-expressions/src/jsx-h.d.ts ./h/jsx-runtime/types/jsx.d.ts",
+    "types:universal": "tsc --project ./universal/tsconfig.json && ncp ../../node_modules/dom-expressions/src/universal.d.ts ./universal/types/universal.d.ts",
+    "bench": "node --allow-natives-syntax bench/bench.cjs",
+    "link": "symlink-dir . node_modules/solid-js",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "test-types": "tsc --project tsconfig.test.json"
   },
-  "devDependencies": {
-    "@babel/cli": "^7.18.9",
-    "@babel/core": "^7.20.12",
-    "@babel/preset-env": "^7.18.9",
-    "@babel/preset-typescript": "^7.18.6",
-    "@changesets/cli": "^2.25.2",
-    "@rollup/plugin-babel": "^6.0.3",
-    "@rollup/plugin-commonjs": "^24.0.0",
-    "@rollup/plugin-json": "^6.0.0",
-    "@rollup/plugin-node-resolve": "^15.0.1",
-    "@rollup/plugin-replace": "^5.0.2",
-    "@types/node": "^18.11.19",
-    "@vitest/coverage-c8": "^0.29.7",
-    "babel-plugin-jsx-dom-expressions": "^0.37.20",
-    "coveralls": "^3.1.1",
+  "keywords": [
+    "solid",
+    "solidjs",
+    "ui",
+    "reactive",
+    "components",
+    "compiler",
+    "performance"
+  ],
+  "dependencies": {
     "csstype": "^3.1.0",
-    "dom-expressions": "0.37.20",
-    "hyper-dom-expressions": "0.37.20",
-    "jsdom": "^21.1.1",
-    "lit-dom-expressions": "0.37.20",
-    "ncp": "^2.0.0",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.8.8",
-    "rimraf": "^3.0.2",
-    "rollup": "^3.7.5",
-    "rollup-plugin-cleanup": "^3.2.1",
-    "rollup-plugin-copy": "^3.4.0",
     "seroval": "^1.0.4",
-    "simple-git-hooks": "^2.8.1",
-    "symlink-dir": "^5.0.1",
-    "tsconfig-replace-paths": "^0.0.11",
-    "turbo": "^1.3.1",
-    "typescript": "^4.9.5",
-    "vite-plugin-solid": "^2.6.1",
-    "vitest": "^0.29.3"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm run format"
-  },
-  "pnpm": {
-    "overrides": {
-      "babel-preset-solid": "workspace:*"
-    }
-  },
-  "engines": {
-    "pnpm": ">=8.6.1"
-  },
-  "packageManager": "pnpm@8.6.1"
+    "seroval-plugins": "^1.0.3"
+  }
 }

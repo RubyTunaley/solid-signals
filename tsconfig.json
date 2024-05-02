@@ -10,5 +10,6 @@
     // Allows TS to see the Vitest globals
     "types": ["vitest/globals"]
   },
+  "include": ["./src", "./test"],
   "exclude": ["node_modules"]
 }
