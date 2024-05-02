@@ -24,11 +24,8 @@ SOFTWARE.
 */
 
 import { requestCallback, Task } from "./scheduler.js";
-import { setHydrateContext, sharedConfig } from "../render/hydration.js";
-import type { JSX } from "../jsx.js";
-import type { FlowComponent, FlowProps } from "../render/index.js";
 
-export const equalFn = <T>(a: T, b: T) => a === b;
+export const equalFn = <T>(a: T, b: T) => (a === 0 && b === 0) || Object.is(a, b);
 export const $PROXY = Symbol("solid-proxy");
 export const $TRACK = Symbol("solid-track");
 export const $DEVCOMP = Symbol("solid-dev-component");
@@ -350,9 +347,7 @@ export function createEffect<Next, Init>(
   options?: EffectOptions & { render?: boolean }
 ): void {
   runEffects = runUserEffects;
-  const c = createComputation(fn, value!, false, STALE, "_SOLID_DEV_" ? options : undefined),
-    s = SuspenseContext && useContext(SuspenseContext);
-  if (s) c.suspense = s;
+  const c = createComputation(fn, value!, false, STALE, "_SOLID_DEV_" ? options : undefined);
   if (!options || !options.render) c.user = true;
   Effects ? Effects.push(c) : updateComputation(c);
 }
@@ -381,9 +376,7 @@ export function createReaction(onInvalidate: () => void, options?: EffectOptions
       false,
       0,
       "_SOLID_DEV_" ? options : undefined
-    ),
-    s = SuspenseContext && useContext(SuspenseContext);
-  if (s) c.suspense = s;
+    );
   c.user = true;
   return (tracking: () => void) => {
     fn = tracking;
@@ -619,12 +612,6 @@ export function createResource<T, S, R>(
       resolved ? "ready" : "unresolved"
     );
 
-  if (sharedConfig.context) {
-    id = `${sharedConfig.context.id}${sharedConfig.context.count++}`;
-    let v;
-    if (options.ssrLoadFrom === "initial") initP = options.initialValue as T;
-    else if (sharedConfig.load && (v = sharedConfig.load(id))) initP = v;
-  }
   function loadEnd(p: Promise<T> | null, v: T | undefined, error?: any, key?: S) {
     if (pr === p) {
       pr = null;
@@ -654,22 +641,9 @@ export function createResource<T, S, R>(
   }
 
   function read() {
-    const c = SuspenseContext && useContext(SuspenseContext),
-      v = value(),
+    const v = value(),
       err = error();
     if (err !== undefined && !pr) throw err;
-    if (Listener && !Listener.user && c) {
-      createComputed(() => {
-        track();
-        if (pr) {
-          if (c.resolved && Transition && loadedUnderTransition) Transition.promises.add(pr);
-          else if (!contexts.has(c)) {
-            c.increment!();
-            contexts.add(c);
-          }
-        }
-      });
-    }
     return v;
   }
   function load(refetching: R | boolean = true) {
@@ -1057,7 +1031,7 @@ export function startTransition(fn: () => unknown): Promise<void> {
     Listener = l;
     Owner = o;
     let t: TransitionState | undefined;
-    if (Scheduler || SuspenseContext) {
+    if (Scheduler) {
       t =
         Transition ||
         (Transition = {
@@ -1135,85 +1109,6 @@ export function registerGraph(value: SourceMapValue): void {
   value.graph = Owner;
 }
 
-export type ContextProviderComponent<T> = FlowComponent<{ value: T }>;
-
-// Context API
-export interface Context<T> {
-  id: symbol;
-  Provider: ContextProviderComponent<T>;
-  defaultValue: T;
-}
-
-/**
- * Creates a Context to handle a state scoped for the children of a component
- * ```typescript
- * interface Context<T> {
- *   id: symbol;
- *   Provider: FlowComponent<{ value: T }>;
- *   defaultValue: T;
- * }
- * export function createContext<T>(
- *   defaultValue?: T,
- *   options?: { name?: string }
- * ): Context<T | undefined>;
- * ```
- * @param defaultValue optional default to inject into context
- * @param options allows to set a name in dev mode for debugging purposes
- * @returns The context that contains the Provider Component and that can be used with `useContext`
- *
- * @description https://docs.solidjs.com/reference/component-apis/create-context
- */
-export function createContext<T>(
-  defaultValue?: undefined,
-  options?: EffectOptions
-): Context<T | undefined>;
-export function createContext<T>(defaultValue: T, options?: EffectOptions): Context<T>;
-export function createContext<T>(
-  defaultValue?: T,
-  options?: EffectOptions
-): Context<T | undefined> {
-  const id = Symbol("context");
-  return { id, Provider: createProvider(id, options), defaultValue };
-}
-
-/**
- * Uses a context to receive a scoped state from a parent's Context.Provider
- *
- * @param context Context object made by `createContext`
- * @returns the current or `defaultValue`, if present
- *
- * @description https://docs.solidjs.com/reference/component-apis/use-context
- */
-export function useContext<T>(context: Context<T>): T {
-  return Owner && Owner.context && Owner.context[context.id] !== undefined
-    ? Owner.context[context.id]
-    : context.defaultValue;
-}
-
-export type ResolvedJSXElement = Exclude<JSX.Element, JSX.ArrayElement>;
-export type ResolvedChildren = ResolvedJSXElement | ResolvedJSXElement[];
-export type ChildrenReturn = Accessor<ResolvedChildren> & { toArray: () => ResolvedJSXElement[] };
-
-/**
- * Resolves child elements to help interact with children
- *
- * @param fn an accessor for the children
- * @returns a accessor of the same children, but resolved
- *
- * @description https://docs.solidjs.com/reference/component-apis/children
- */
-export function children(fn: Accessor<JSX.Element>): ChildrenReturn {
-  const children = createMemo(fn);
-  const memo = "_SOLID_DEV_"
-    ? createMemo(() => resolveChildren(children()), undefined, { name: "children" })
-    : createMemo(() => resolveChildren(children()));
-  (memo as ChildrenReturn).toArray = () => {
-    const c = memo();
-    return Array.isArray(c) ? c : c != null ? [c] : [];
-  };
-  return memo as ChildrenReturn;
-}
-
 // Resource API
 export type SuspenseContextType = {
   increment?: () => void;
@@ -1222,18 +1117,6 @@ export type SuspenseContextType = {
   effects?: Computation<any>[];
   resolved?: boolean;
 };
-
-type SuspenseContext = Context<SuspenseContextType | undefined> & {
-  active?(): boolean;
-  increment?(): void;
-  decrement?(): void;
-};
-
-let SuspenseContext: SuspenseContext;
-
-export function getSuspenseContext() {
-  return SuspenseContext || (SuspenseContext = createContext<SuspenseContextType | undefined>());
-}
 
 // Interop
 export function enableExternalSource(
@@ -1589,18 +1472,6 @@ function runUserEffects(queue: Computation<any>[]) {
     if (!e.user) runTop(e);
     else queue[userLength++] = e;
   }
-  if (sharedConfig.context) {
-    if (sharedConfig.count) {
-      sharedConfig.effects || (sharedConfig.effects = []);
-      sharedConfig.effects.push(...queue.slice(0, userLength));
-      return;
-    } else if (sharedConfig.effects) {
-      queue = [...sharedConfig.effects, ...queue];
-      userLength += sharedConfig.effects.length;
-      delete sharedConfig.effects;
-    }
-    setHydrateContext();
-  }
   for (i = 0; i < userLength; i++) runTop(queue[i]);
 }
 
@@ -1710,35 +1581,6 @@ function handleError(err: unknown, owner = Owner) {
       state: STALE
     } as unknown as Computation<any>);
   else runErrors(error, fns, owner);
-}
-
-function resolveChildren(children: JSX.Element | Accessor<any>): ResolvedChildren {
-  if (typeof children === "function" && !children.length) return resolveChildren(children());
-  if (Array.isArray(children)) {
-    const results: any[] = [];
-    for (let i = 0; i < children.length; i++) {
-      const result = resolveChildren(children[i]);
-      Array.isArray(result) ? results.push.apply(results, result) : results.push(result);
-    }
-    return results;
-  }
-  return children as ResolvedChildren;
-}
-
-function createProvider(id: symbol, options?: EffectOptions) {
-  return function provider(props: FlowProps<{ value: unknown }>) {
-    let res;
-    createRenderEffect(
-      () =>
-        (res = untrack(() => {
-          Owner!.context = { ...Owner!.context, [id]: props.value };
-          return children(() => props.children);
-        })),
-      undefined,
-      options
-    );
-    return res;
-  };
 }
 
 type TODO = any;
