@@ -8,5 +8,5 @@ This extraction has made changes:
 
 * Anything related to Solid's UI framework has been removed.
 * All `createX` functions, such as `createSignal`, have been renamed to `$x`, e.g. `$signal`.
-* `$DEVCOMP`, `$PROXY`, and `$TRACK` have been renames, with their `$` replaced with `_`.
+* `$DEVCOMP`, `$PROXY`, and `$TRACK` have been renamed with their `$` replaced with `_`, e.g. `_DEVCOMP`.
 * Dev exports are always accessible.
