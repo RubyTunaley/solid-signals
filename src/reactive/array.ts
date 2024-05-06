@@ -166,7 +166,7 @@ export function mapArray<T, U>(
     function mapper(disposer: () => void) {
       disposers[j] = disposer;
       if (indexes) {
-        const [s, set] = "_SOLID_DEV_" ? createSignal(j, { name: "index" }) : createSignal(j);
+        const { get: s, set: set } = "_SOLID_DEV_" ? createSignal(j, { name: "index" }) : createSignal(j);
         indexes[j] = set;
         return mapFn(newItems[j], s);
       }
@@ -242,7 +242,7 @@ export function indexArray<T, U>(
     });
     function mapper(disposer: () => void) {
       disposers[i] = disposer;
-      const [s, set] = "_SOLID_DEV_"
+      const { get: s, set: set } = "_SOLID_DEV_"
         ? createSignal(newItems[i], { name: "value" })
         : createSignal(newItems[i]);
       signals[i] = set;

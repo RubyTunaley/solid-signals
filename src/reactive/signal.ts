@@ -183,7 +183,13 @@ export type Setter<in out T> = {
   <U extends T>(value: Exclude<U, Function> | ((prev: T) => U)): U;
 };
 
-export type Signal<T> = [get: Accessor<T>, set: Setter<T>];
+export interface ReadonlySignal<T> {
+  readonly get: Accessor<T>;
+}
+
+export interface Signal<T> extends ReadonlySignal<T> {
+  readonly set: Setter<T>;
+}
 
 export interface SignalOptions<T> extends MemoOptions<T> {
   internal?: boolean;
@@ -241,7 +247,16 @@ export function createSignal<T>(
     return writeSignal(s, value);
   };
 
-  return [readSignal.bind(s), setter];
+  return {
+    get: readSignal.bind(s),
+    set: setter
+  };
+}
+
+export function $readonly<T> (signal: ReadonlySignal<T>): ReadonlySignal<T> {
+  return {
+    get: signal.get
+  };
 }
 
 export interface BaseOptions {
@@ -603,12 +618,12 @@ export function createResource<T, S, R>(
       typeof source === "function" && createMemo(source as () => S | false | null | undefined);
 
   const contexts = new Set<SuspenseContextType>(),
-    [value, setValue] = (options.storage || createSignal)(options.initialValue) as Signal<
+    { get: value, set: setValue } = (options.storage || createSignal)(options.initialValue) as Signal<
       T | undefined
     >,
-    [error, setError] = createSignal<unknown>(undefined),
-    [track, trigger] = createSignal(undefined, { equals: false }),
-    [state, setState] = createSignal<"unresolved" | "pending" | "ready" | "refreshing" | "errored">(
+    { get: error, set: setError } = createSignal<unknown>(undefined),
+    { set: trigger } = createSignal(undefined, { equals: false }),
+    { get: state, set: setState } = createSignal<"unresolved" | "pending" | "ready" | "refreshing" | "errored">(
       resolved ? "ready" : "unresolved"
     );
 
@@ -743,7 +758,7 @@ export function createDeferred<T>(source: Accessor<T>, options?: DeferredOptions
     undefined,
     true
   ) as Memo<any>;
-  const [deferred, setDeferred] = createSignal(
+  const { get: deferred, set: setDeferred } = createSignal(
     Transition && Transition.running && Transition.sources.has(node) ? node.tValue : node.value,
     options
   );
@@ -1052,7 +1067,7 @@ export function startTransition(fn: () => unknown): Promise<void> {
 }
 
 // keep immediately evaluated module code, below its dependencies like Listener & createSignal
-const [transPending, setTransPending] = /*@__PURE__*/ createSignal(false);
+const { get: transPending, set: setTransPending } = /*@__PURE__*/ createSignal(false);
 
 export type Transition = [Accessor<boolean>, (fn: () => void) => Promise<void>];
 
@@ -1323,7 +1338,7 @@ function createComputation<Next, Init = unknown>(
   if ("_SOLID_DEV_" && options && options.name) c.name = options.name;
 
   if (ExternalSourceConfig && c.fn) {
-    const [track, trigger] = createSignal<void>(undefined, { equals: false });
+    const { get: track, set: trigger } = createSignal<void>(undefined, { equals: false });
     const ordinary = ExternalSourceConfig.factory(c.fn, trigger);
     onCleanup(() => ordinary.dispose());
     const triggerInTransition: () => void = () =>
@@ -1557,7 +1572,11 @@ function reset(node: Computation<any>, top?: boolean) {
 
 function castError(err: unknown): Error {
   if (err instanceof Error) return err;
-  return new Error(typeof err === "string" ? err : "Unknown error", { cause: err });
+  return new Error(
+    typeof err === "string" ? err : "Unknown error",
+    // @ts-expect-error Useful for modern browsers, ignored by others
+    { cause: err }
+  );
 }
 
 function runErrors(err: unknown, fns: ((err: any) => void)[], owner: Owner | null) {

@@ -26,7 +26,8 @@ export {
   runWithOwner,
   startTransition,
   untrack,
-  useTransition
+  useTransition,
+  $readonly
 } from "./reactive/signal.js";
 export type {
   Accessor,

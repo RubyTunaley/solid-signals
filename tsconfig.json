@@ -2,7 +2,8 @@
   "compilerOptions": {
     "emitDeclarationOnly": true,
     "declaration": true,
-    "target": "esnext",
+    "target": "ESNext",
+    "lib": ["ES5", "DOM"],
     "newLine": "LF",
     "moduleResolution": "node",
     "strict": true
