@@ -12,4 +12,4 @@ This extraction has made changes:
 * The default `equalFn` has been changed from `a === b` to `(a === 0 && b === 0) || Object.is(a, b)`, so now `NaN` will compare as equal to itself.
 * Dev exports are always accessible.
 * Instead of returning a tuple, `$signal` returns an object with `get` and `set` methods.
-* Added `$readonly` function to make object signals read-only.
+* Added `readonly` function to make object signals read-only.

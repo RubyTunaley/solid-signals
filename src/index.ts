@@ -27,7 +27,7 @@ export {
   startTransition,
   untrack,
   useTransition,
-  $readonly
+  readonly as $readonly
 } from "./reactive/signal.js";
 export type {
   Accessor,

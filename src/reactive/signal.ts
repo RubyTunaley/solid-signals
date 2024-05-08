@@ -253,7 +253,7 @@ export function createSignal<T>(
   };
 }
 
-export function $readonly<T> (signal: ReadonlySignal<T>): ReadonlySignal<T> {
+export function readonly<T> (signal: ReadonlySignal<T>): ReadonlySignal<T> {
   return {
     get: signal.get
   };
