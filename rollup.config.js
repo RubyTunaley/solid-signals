@@ -53,26 +53,7 @@ const plugins = [
   sourcemaps()
 ];
 
-/** @type {import("@rollup/plugin-terser").Options} */
-const umdTerserOptions = {
-  ecma: 5,
-  parse: {
-    html5_comments: false,
-    shebang: false
-  },
-  compress: {
-    arrows: false,
-    inline: 2,
-    typeofs: false,
-    unsafe_comps: true,
-    unsafe_math: true
-  },
-  mangle: {
-    safari10: true
-  },
-  format: {
-    comments: /^# sourceMappingURL=/u,
-    preamble: `/**
+const license = `/**
 The MIT License (MIT)
 
 Copyright (c) 2017 Adam Haile
@@ -94,7 +75,28 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-*/`,
+*/`;
+
+/** @type {import("@rollup/plugin-terser").Options} */
+const umdTerserOptions = {
+  ecma: 5,
+  parse: {
+    html5_comments: false,
+    shebang: false
+  },
+  compress: {
+    arrows: false,
+    inline: 2,
+    typeofs: false,
+    unsafe_comps: true,
+    unsafe_math: true
+  },
+  mangle: {
+    safari10: true
+  },
+  format: {
+    comments: /^# sourceMappingURL=/u,
+    preamble: license,
     safari10: true,
     shebang: false,
     wrap_func_args: false
@@ -130,7 +132,9 @@ const options = [
         file: "dist/umd/solid-signals.js",
         format: "umd",
         name: "signals",
-        sourcemap: true
+        sourcemap: true,
+        banner: license
+
       },
       {
         file: "dist/umd/solid-signals.min.js",
@@ -151,7 +155,8 @@ const options = [
       {
         file: "dist/esm/solid-signals.js",
         format: "es",
-        sourcemap: true
+        sourcemap: true,
+        banner: license
       },
       {
         file: "dist/esm/solid-signals.min.js",
@@ -171,11 +176,12 @@ const options = [
       {
         file: "dist/umd/solid-signals.d.ts",
         format: "umd",
-        banner: "export as namespace signals;"
+        banner: license + "\nexport as namespace signals;"
       },
       {
         file: "dist/esm/solid-signals.d.ts",
-        format: "es"
+        format: "es",
+        banner: license
       }
     ],
     plugins: [dts()],
